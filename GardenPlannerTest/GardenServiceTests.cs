@@ -9,13 +9,14 @@ namespace GardenPlannerTest
 {
     public class GardenServiceTest
     {
-
+        string gardenId = "gardenId";
+        string tileTypeId = "tileTypeId";
+        string userId = "id";
 
         [Fact]
         public void createGardenTest()
         {
             var options = getInMemoryDbOptions("createGardenTest");
-            var userId = "id";
 
             using (var context = new GardenPlannerContext(options))
             {
@@ -26,7 +27,6 @@ namespace GardenPlannerTest
                 });
                 context.SaveChanges();
             }
-
 
             using (var context = new GardenPlannerContext(options))
             {
@@ -52,9 +52,6 @@ namespace GardenPlannerTest
         public void addTileTest()
         {
             var options = getInMemoryDbOptions("addTileTest");
-            var gardenId = "gardenId";
-            var tileTypeId = "tileTypeId";
-            var userId = "id";
             using (var context = new GardenPlannerContext(options))
             {
 
@@ -91,14 +88,17 @@ namespace GardenPlannerTest
 
             using (var context = new GardenPlannerContext(options))
             {
-                var tile = context.Gardens.Find(gardenId)?.Tiles.Single();
+                var tile = context.Gardens
+                    .Include(g => g.Tiles)
+                    .ThenInclude(t => t.TileType)
+                    .First().Tiles.Single();
+
                 Assert.Equal(tileTypeId, tile.TileType.Id );
                 Assert.Equal(10, tile.X);
                 Assert.Equal(12, tile.Y);
             }
 
         }
-
 
 
         private DbContextOptions<GardenPlannerContext> getInMemoryDbOptions(string name)

@@ -30,7 +30,7 @@ namespace GardenPlanner
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=xgef0q;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False")
+                optionsBuilder.UseSqlite(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=xgef0q;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False")
                 .UseLoggerFactory(GetLoggerFactory());
             }
         }
