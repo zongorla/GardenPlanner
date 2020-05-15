@@ -11,6 +11,7 @@ using GardenPlannerApp.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using AutoMapper;
 
 namespace GardenPlannerApp
 {
@@ -38,6 +39,14 @@ namespace GardenPlannerApp
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
             services.AddControllersWithViews();
             services.AddRazorPages();

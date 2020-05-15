@@ -234,8 +234,8 @@ namespace GardenPlannerApp.Migrations
                     Id = table.Column<string>(nullable: false),
                     X = table.Column<int>(nullable: false),
                     Y = table.Column<int>(nullable: false),
-                    TileTypeId = table.Column<string>(nullable: true),
-                    GardenId = table.Column<string>(nullable: false)
+                    TileTypeId = table.Column<string>(nullable: false),
+                    GardenId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

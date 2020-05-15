@@ -3,14 +3,16 @@ using System;
 using GardenPlannerApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GardenPlannerApp.Migrations
 {
     [DbContext(typeof(GardenPlannerAppDbContext))]
-    partial class GardenPlannerAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200515183135_AddColor")]
+    partial class AddColor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

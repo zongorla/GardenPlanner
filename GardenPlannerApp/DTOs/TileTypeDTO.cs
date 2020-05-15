@@ -5,28 +5,17 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace GardenPlannerApp.Models
+namespace GardenPlannerApp.DTOs
 {
-    public class TileType
+    public class TileTypeDTO
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
 
-        [Required]
         public string Name { get; set; }
 
-        [Required]
         public string Color { get; set; }
 
-
-        [Required]
         public bool Public { get; set; }
-
-        public ApplicationUser Creator { get; set; }
-
-        [JsonIgnore]
-        public List<GardenTile> Tiles { get; } = new List<GardenTile>();
 
     }
 }

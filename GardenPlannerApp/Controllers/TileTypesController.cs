@@ -9,67 +9,59 @@ using GardenPlannerApp.Data;
 using GardenPlannerApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using IdentityServer4.Extensions;
-using Microsoft.AspNetCore.Identity;
 using GardenPlannerApp.DTOs;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace GardenPlannerApp.Controllers
 {
-
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class GardensController : ControllerBase
+    public class TileTypesController : ControllerBase
     {
         private readonly GardenPlannerAppDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMapper _mapper;
 
-        public GardensController(GardenPlannerAppDbContext context, UserManager<ApplicationUser> userManager, IMapper mapper)
+        public TileTypesController(GardenPlannerAppDbContext context, IMapper mapper)
         {
             _context = context;
-            _userManager = userManager;
             _mapper = mapper;
         }
 
-        // GET: api/Gardens
+        // GET: api/TileTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GardenDTO>>> GetGardens()
+        public async Task<ActionResult<IEnumerable<TileTypeDTO>>> GetTileTypes()
         {
-            return _mapper.Map<List<GardenDTO>>(await _context.Gardens.ToListAsync());
+            return _mapper.Map<List<TileTypeDTO>>(await _context.TileTypes.ToListAsync());
         }
 
-        // GET: api/Gardens/5
+        // GET: api/TileTypes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<GardenDTO>> GetGarden(string id)
+        public async Task<ActionResult<TileTypeDTO>> GetTileType(string id)
         {
-            var garden = await _context.Gardens.Where(x => x.Id == id)
-                .Include(x => x.Tiles)
-                .Include("Tiles.TileType")
-                .FirstOrDefaultAsync();
-            if (garden == null)
+            var tileType = await _context.TileTypes.FindAsync(id);
+
+            if (tileType == null)
             {
                 return NotFound();
             }
-            var gardenDto = _mapper.Map<GardenDTO>(garden);
-            return gardenDto;
+
+            return _mapper.Map<TileTypeDTO>(tileType);
         }
 
-        // PUT: api/Gardens/5
+        // PUT: api/TileTypes/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGarden(string id, GardenDTO gardenDTO)
+        public async Task<IActionResult> PutTileType(string id, TileTypeDTO tileTypeDto)
         {
-            Garden garden = _mapper.Map<Garden>(gardenDTO);
-            if (id != garden.Id)
+            TileType tileType = _mapper.Map<TileType>(tileTypeDto);
+            if (id != tileType.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(garden).State = EntityState.Modified;
+            _context.Entry(tileType).State = EntityState.Modified;
 
             try
             {
@@ -77,7 +69,7 @@ namespace GardenPlannerApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GardenExists(id))
+                if (!TileTypeExists(id))
                 {
                     return NotFound();
                 }
@@ -90,42 +82,42 @@ namespace GardenPlannerApp.Controllers
             return NoContent();
         }
 
-        // POST: api/Gardens
+        // POST: api/TileTypes
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<GardenDTO>> PostGarden(GardenDTO newGarden)
+        public async Task<ActionResult<TileTypeDTO>> PostTileType(TileTypeDTO tileTypeDto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // will give the user's userId
 
             ApplicationUser applicationUser = await _context.Users.FindAsync(userId);
-            var garden = _mapper.Map<Garden>(newGarden);
-            garden.User = applicationUser;
-
-            _context.Gardens.Add(garden);
+            TileType tileType = _mapper.Map<TileType>(tileTypeDto);
+            tileType.Creator = applicationUser;
+            _context.TileTypes.Add(tileType);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetGarden", new { id = garden.Id }, _mapper.Map<GardenDTO>(garden));
+
+            return CreatedAtAction("GetTileType", new { id = tileType.Id });
         }
 
-        // DELETE: api/Gardens/5
+        // DELETE: api/TileTypes/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<GardenDTO>> DeleteGarden(string id)
+        public async Task<ActionResult<TileTypeDTO>> DeleteTileType(string id)
         {
-            var garden = await _context.Gardens.FindAsync(id);
-            if (garden == null)
+            var tileType = await _context.TileTypes.FindAsync(id);
+            if (tileType == null)
             {
                 return NotFound();
             }
 
-            _context.Gardens.Remove(garden);
+            _context.TileTypes.Remove(tileType);
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<GardenDTO>(garden);
+            return _mapper.Map<TileTypeDTO>(tileType);
         }
 
-        private bool GardenExists(string id)
+        private bool TileTypeExists(string id)
         {
-            return _context.Gardens.Any(e => e.Id == id);
+            return _context.TileTypes.Any(e => e.Id == id);
         }
     }
 }

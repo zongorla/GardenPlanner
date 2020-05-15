@@ -4,18 +4,18 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace GardenPlannerApp.Controllers.DTOs
+namespace GardenPlannerApp.DTOs
 {
-    public class NewGardenDTO
+    public class GardenDTO
     {
+        public string Id { get; set; }
 
-        [Required]
         public string Name { get; set; }
 
-        [Required]
+        public List<GardenTileDTO> Tiles { get; set; } = new List<GardenTileDTO>();
+
         public int Width { get; set; }
 
-        [Required]
-        public int  Height { get; set; }
+        public int Height { get; set; }
     }
 }

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GardenPlannerApp.Migrations
 {
     [DbContext(typeof(GardenPlannerAppDbContext))]
-    [Migration("20200512191059_InitialCreate")]
+    [Migration("20200515182626_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -117,10 +117,10 @@ namespace GardenPlannerApp.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("GardenId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("TileTypeId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("X")
@@ -389,13 +389,13 @@ namespace GardenPlannerApp.Migrations
                     b.HasOne("GardenPlannerApp.Models.Garden", "Garden")
                         .WithMany("Tiles")
                         .HasForeignKey("GardenId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("GardenPlannerApp.Models.TileType", "TileType")
                         .WithMany("Tiles")
                         .HasForeignKey("TileTypeId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("GardenPlannerApp.Models.TileType", b =>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -18,9 +19,10 @@ namespace GardenPlannerApp.Models
         [Required]
         public int Y { get; set; }
 
+        [Required]
         public TileType TileType { get; set; }
 
-        [Required]
+        [JsonIgnore]
         public Garden Garden { get; set; }
 
     }
