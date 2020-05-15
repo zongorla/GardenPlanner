@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GardenPlannerApp.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -191,7 +191,8 @@ namespace GardenPlannerApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    UserId = table.Column<string>(nullable: false),
+                    Public = table.Column<bool>(nullable: false),
+                    OwnerId = table.Column<string>(nullable: false),
                     Name = table.Column<string>(maxLength: 15, nullable: false),
                     Width = table.Column<int>(nullable: false),
                     Height = table.Column<int>(nullable: false)
@@ -200,8 +201,8 @@ namespace GardenPlannerApp.Migrations
                 {
                     table.PrimaryKey("PK_Gardens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Gardens_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Gardens_AspNetUsers_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -212,16 +213,17 @@ namespace GardenPlannerApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
                     Public = table.Column<bool>(nullable: false),
-                    CreatorId = table.Column<string>(nullable: true)
+                    OwnerId = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Color = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TileTypes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TileTypes_AspNetUsers_CreatorId",
-                        column: x => x.CreatorId,
+                        name: "FK_TileTypes_AspNetUsers_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
@@ -232,6 +234,8 @@ namespace GardenPlannerApp.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
+                    Public = table.Column<bool>(nullable: false),
+                    OwnerId = table.Column<string>(nullable: false),
                     X = table.Column<int>(nullable: false),
                     Y = table.Column<int>(nullable: false),
                     TileTypeId = table.Column<string>(nullable: false),
@@ -244,6 +248,12 @@ namespace GardenPlannerApp.Migrations
                         name: "FK_GardenTiles_Gardens_GardenId",
                         column: x => x.GardenId,
                         principalTable: "Gardens",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GardenTiles_AspNetUsers_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -303,14 +313,19 @@ namespace GardenPlannerApp.Migrations
                 column: "Expiration");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Gardens_UserId",
+                name: "IX_Gardens_OwnerId",
                 table: "Gardens",
-                column: "UserId");
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GardenTiles_GardenId",
                 table: "GardenTiles",
                 column: "GardenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GardenTiles_OwnerId",
+                table: "GardenTiles",
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GardenTiles_TileTypeId",
@@ -328,9 +343,9 @@ namespace GardenPlannerApp.Migrations
                 columns: new[] { "SubjectId", "ClientId", "Type" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TileTypes_CreatorId",
+                name: "IX_TileTypes_OwnerId",
                 table: "TileTypes",
-                column: "CreatorId");
+                column: "OwnerId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

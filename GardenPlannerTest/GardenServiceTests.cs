@@ -1,6 +1,3 @@
-using GardenPlanner;
-using GardenPlanner.Entities;
-using GardenPlanner.Service;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using Xunit;
@@ -9,7 +6,7 @@ namespace GardenPlannerTest
 {
     public class GardenServiceTest
     {
-        string gardenId = "gardenId";
+       /* string gardenId = "gardenId";
         string tileTypeId = "tileTypeId";
         string userId = "id";
 
@@ -106,7 +103,7 @@ namespace GardenPlannerTest
             return new DbContextOptionsBuilder<GardenPlannerContext>()
                 .UseInMemoryDatabase(databaseName: name)
                 .Options;
-        }
+        }*/
 
     }
 }

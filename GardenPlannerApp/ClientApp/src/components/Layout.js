@@ -10,7 +10,7 @@ export class Layout extends Component {
       <div>
         <NavMenu />
         <Container>
-          <div class="container">
+          <div className="container">
             {this.props.children}
           </div>
         </Container>

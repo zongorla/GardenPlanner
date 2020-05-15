@@ -7,7 +7,7 @@ using System.Text;
 
 namespace GardenPlannerApp.DTOs
 {
-    public class TileTypeDTO
+    public class TileTypeDTO: BaseDTO
     {
         public string Id { get; set; }
 
@@ -15,7 +15,6 @@ namespace GardenPlannerApp.DTOs
 
         public string Color { get; set; }
 
-        public bool Public { get; set; }
 
     }
 }

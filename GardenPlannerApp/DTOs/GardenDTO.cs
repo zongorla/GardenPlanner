@@ -6,7 +6,7 @@ using System.Text;
 
 namespace GardenPlannerApp.DTOs
 {
-    public class GardenDTO
+    public class GardenDTO: BaseDTO
     {
         public string Id { get; set; }
 

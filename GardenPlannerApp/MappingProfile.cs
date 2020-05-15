@@ -18,6 +18,8 @@ namespace GardenPlannerApp
             CreateMap<GardenTileDTO, GardenTile>();
             CreateMap<TileType, TileTypeDTO>();
             CreateMap<TileTypeDTO, TileType>();
+            CreateMap<UserDTO, ApplicationUser>();
+            CreateMap<ApplicationUser, UserDTO>();
         }
     }
 }

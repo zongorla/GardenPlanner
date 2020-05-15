@@ -7,7 +7,7 @@ using System.Text;
 
 namespace GardenPlannerApp.Models
 {
-    public class TileType
+    public class TileType: BaseEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -18,12 +18,6 @@ namespace GardenPlannerApp.Models
 
         [Required]
         public string Color { get; set; }
-
-
-        [Required]
-        public bool Public { get; set; }
-
-        public ApplicationUser Creator { get; set; }
 
         [JsonIgnore]
         public List<GardenTile> Tiles { get; } = new List<GardenTile>();

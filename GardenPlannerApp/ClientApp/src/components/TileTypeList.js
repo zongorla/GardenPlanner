@@ -22,7 +22,7 @@ export class TileTypeList extends Component {
           {tileTypes.map(tileType =>
             <tr key={tileType.id}>
               <td>{tileType.name}</td>
-              <td>{tileType.color}</td>
+              <td style={{backgroundColor:tileType.color}}>{tileType.color}</td>
               <td><input onChange={() => this.props.selectTile(tileType.id)} type="radio" id={tileType.id} name="selectedid" checked={this.props.lastTileId == tileType.id}  value={tileType.id}></input></td>
             </tr>
           )}

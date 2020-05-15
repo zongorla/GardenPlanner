@@ -42,12 +42,12 @@ namespace GardenPlannerApp.Data
         {
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.Gardens)
-                .WithOne(g => g.User)
+                .WithOne(g => g.Owner)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.TileTypes)
-                .WithOne(u => u.Creator)
+                .WithOne(u => u.Owner)
                 .OnDelete(DeleteBehavior.SetNull);
 
         }

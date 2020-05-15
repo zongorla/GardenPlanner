@@ -6,14 +6,11 @@ using System.Text;
 
 namespace GardenPlannerApp.Models
 {
-    public class Garden
+    public class Garden: BaseEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; }
-
-        [Required]
-        public ApplicationUser User { get; set; }
 
         [Required]
         public string Name { get; set; }

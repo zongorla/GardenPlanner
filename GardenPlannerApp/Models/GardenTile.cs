@@ -7,7 +7,7 @@ using System.Text;
 
 namespace GardenPlannerApp.Models
 {
-    public class GardenTile
+    public class GardenTile: BaseEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

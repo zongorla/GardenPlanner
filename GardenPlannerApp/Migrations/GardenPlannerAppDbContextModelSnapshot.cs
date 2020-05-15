@@ -94,16 +94,19 @@ namespace GardenPlannerApp.Migrations
                         .HasColumnType("TEXT")
                         .HasMaxLength(15);
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("OwnerId")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Public")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Width")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Gardens");
                 });
@@ -116,6 +119,13 @@ namespace GardenPlannerApp.Migrations
 
                     b.Property<string>("GardenId")
                         .HasColumnType("TEXT");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Public")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("TileTypeId")
                         .IsRequired()
@@ -130,6 +140,8 @@ namespace GardenPlannerApp.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("GardenId");
+
+                    b.HasIndex("OwnerId");
 
                     b.HasIndex("TileTypeId");
 
@@ -146,10 +158,11 @@ namespace GardenPlannerApp.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CreatorId")
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("OwnerId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -158,7 +171,7 @@ namespace GardenPlannerApp.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatorId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("TileTypes");
                 });
@@ -379,9 +392,9 @@ namespace GardenPlannerApp.Migrations
 
             modelBuilder.Entity("GardenPlannerApp.Models.Garden", b =>
                 {
-                    b.HasOne("GardenPlannerApp.Models.ApplicationUser", "User")
+                    b.HasOne("GardenPlannerApp.Models.ApplicationUser", "Owner")
                         .WithMany("Gardens")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -393,6 +406,12 @@ namespace GardenPlannerApp.Migrations
                         .HasForeignKey("GardenId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("GardenPlannerApp.Models.ApplicationUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GardenPlannerApp.Models.TileType", "TileType")
                         .WithMany("Tiles")
                         .HasForeignKey("TileTypeId")
@@ -402,10 +421,11 @@ namespace GardenPlannerApp.Migrations
 
             modelBuilder.Entity("GardenPlannerApp.Models.TileType", b =>
                 {
-                    b.HasOne("GardenPlannerApp.Models.ApplicationUser", "Creator")
+                    b.HasOne("GardenPlannerApp.Models.ApplicationUser", "Owner")
                         .WithMany("TileTypes")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using GardenPlannerApp.DTOs;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace GardenPlannerApp.Controllers
 {
@@ -21,31 +22,24 @@ namespace GardenPlannerApp.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class GardensController : ControllerBase
+    public class GardensController : GardenPlannerAppControllerBase
     {
-        private readonly GardenPlannerAppDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IMapper _mapper;
 
-        public GardensController(GardenPlannerAppDbContext context, UserManager<ApplicationUser> userManager, IMapper mapper)
-        {
-            _context = context;
-            _userManager = userManager;
-            _mapper = mapper;
-        }
+        public GardensController(GardenPlannerAppDbContext context, IMapper mapper)
+            : base(context, mapper) { }
 
         // GET: api/Gardens
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GardenDTO>>> GetGardens()
         {
-            return _mapper.Map<List<GardenDTO>>(await _context.Gardens.ToListAsync());
+            return SetReadonly(_mapper.Map<List<GardenDTO>>(await _context.Gardens.OwnedOrPublic(UserId).ToListAsync()));
         }
 
         // GET: api/Gardens/5
         [HttpGet("{id}")]
         public async Task<ActionResult<GardenDTO>> GetGarden(string id)
         {
-            var garden = await _context.Gardens.Where(x => x.Id == id)
+            var garden = await _context.Gardens.OwnedOrPublic(UserId).Where(x => x.Id == id)
                 .Include(x => x.Tiles)
                 .Include("Tiles.TileType")
                 .FirstOrDefaultAsync();
@@ -54,7 +48,7 @@ namespace GardenPlannerApp.Controllers
                 return NotFound();
             }
             var gardenDto = _mapper.Map<GardenDTO>(garden);
-            return gardenDto;
+            return SetReadonly(gardenDto);
         }
 
         // PUT: api/Gardens/5
@@ -67,6 +61,10 @@ namespace GardenPlannerApp.Controllers
             if (id != garden.Id)
             {
                 return BadRequest();
+            }
+            if (!Owned(garden))
+            {
+                return Unauthorized();
             }
 
             _context.Entry(garden).State = EntityState.Modified;
@@ -96,22 +94,52 @@ namespace GardenPlannerApp.Controllers
         [HttpPost]
         public async Task<ActionResult<GardenDTO>> PostGarden(GardenDTO newGarden)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // will give the user's userId
-
-            ApplicationUser applicationUser = await _context.Users.FindAsync(userId);
             var garden = _mapper.Map<Garden>(newGarden);
-            garden.User = applicationUser;
+
+            OwnIt(garden);
 
             _context.Gardens.Add(garden);
+
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetGarden", new { id = garden.Id }, _mapper.Map<GardenDTO>(garden));
+            return CreatedAtAction("GetGarden", new { id = garden.Id }, SetReadonly(_mapper.Map<GardenDTO>(garden)));
         }
+
+
+        [HttpPost("share")]
+        public async Task<ActionResult<GardenDTO>> PostShareGarden(GardenDTO gardenDTO)
+        {
+            var garden = await _context.Gardens.OwnedOrPublic(UserId).Where(x => x.Id == gardenDTO.Id)
+                 .Include(x => x.Tiles)
+                 .Include("Tiles.TileType")
+                 .FirstOrDefaultAsync();
+            if (garden == null)
+            {
+                return BadRequest();
+            }
+            if (!Owned(garden))
+            {
+                return Unauthorized();
+            }
+
+            garden.Public = gardenDTO.Public;
+            garden.Tiles.ForEach(x => x.Public = gardenDTO.Public);
+            garden.Tiles.ForEach(x => x.TileType.Public = gardenDTO.Public);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetGarden", new { id = garden.Id }, SetReadonly(_mapper.Map<GardenDTO>(garden)));
+        }
+
 
         // DELETE: api/Gardens/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<GardenDTO>> DeleteGarden(string id)
         {
-            var garden = await _context.Gardens.FindAsync(id);
+            var garden = await _context.Gardens.Include(x => x.Owner).Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (!Owned(garden))
+            {
+                return Unauthorized();
+            }
+
             if (garden == null)
             {
                 return NotFound();
@@ -120,12 +148,15 @@ namespace GardenPlannerApp.Controllers
             _context.Gardens.Remove(garden);
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<GardenDTO>(garden);
+            return SetReadonly(_mapper.Map<GardenDTO>(garden));
         }
+
+
+
 
         private bool GardenExists(string id)
         {
-            return _context.Gardens.Any(e => e.Id == id);
+            return _context.Gardens.OwnedOrPublic(UserId).Any(e => e.Id == id);
         }
     }
 }

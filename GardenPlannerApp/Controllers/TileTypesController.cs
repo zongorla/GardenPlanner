@@ -17,36 +17,30 @@ namespace GardenPlannerApp.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class TileTypesController : ControllerBase
+    public class TileTypesController : GardenPlannerAppControllerBase
     {
-        private readonly GardenPlannerAppDbContext _context;
-        private readonly IMapper _mapper;
-
         public TileTypesController(GardenPlannerAppDbContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
+            : base(context, mapper) { }
 
         // GET: api/TileTypes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TileTypeDTO>>> GetTileTypes()
         {
-            return _mapper.Map<List<TileTypeDTO>>(await _context.TileTypes.ToListAsync());
+            return SetReadonly(_mapper.Map<List<TileTypeDTO>>(await _context.TileTypes.OwnedOrPublic(UserId).ToListAsync()));
         }
 
         // GET: api/TileTypes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TileTypeDTO>> GetTileType(string id)
         {
-            var tileType = await _context.TileTypes.FindAsync(id);
+            var tileType = await _context.TileTypes.OwnedOrPublic(UserId).Where(x => x.Id == id).FirstOrDefaultAsync();
 
             if (tileType == null)
             {
                 return NotFound();
             }
 
-            return _mapper.Map<TileTypeDTO>(tileType);
+            return SetReadonly(_mapper.Map<TileTypeDTO>(tileType));
         }
 
         // PUT: api/TileTypes/5
@@ -88,36 +82,38 @@ namespace GardenPlannerApp.Controllers
         [HttpPost]
         public async Task<ActionResult<TileTypeDTO>> PostTileType(TileTypeDTO tileTypeDto)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // will give the user's userId
-
-            ApplicationUser applicationUser = await _context.Users.FindAsync(userId);
             TileType tileType = _mapper.Map<TileType>(tileTypeDto);
-            tileType.Creator = applicationUser;
+
+            OwnIt(tileType);
+
             _context.TileTypes.Add(tileType);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTileType", new { id = tileType.Id });
+            return CreatedAtAction("GetTileType", new { id = tileType.Id }, SetReadonly(_mapper.Map<TileTypeDTO>(tileType)));
         }
 
         // DELETE: api/TileTypes/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<TileTypeDTO>> DeleteTileType(string id)
         {
-            var tileType = await _context.TileTypes.FindAsync(id);
+            var tileType = await _context.TileTypes.Include(x => x.Owner).Where(x => x.Id == id).FirstOrDefaultAsync();
             if (tileType == null)
             {
                 return NotFound();
             }
-
+            if (!Owned(tileType))
+            {
+                return Unauthorized();
+            }
             _context.TileTypes.Remove(tileType);
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<TileTypeDTO>(tileType);
+            return SetReadonly(_mapper.Map<TileTypeDTO>(tileType));
         }
 
         private bool TileTypeExists(string id)
         {
-            return _context.TileTypes.Any(e => e.Id == id);
+            return _context.TileTypes.OwnedOrPublic(UserId).Any(e => e.Id == id);
         }
     }
 }
