@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using GardenPlannerApp.DTOs;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
 
 namespace GardenPlannerApp.Controllers
 {
@@ -19,8 +20,8 @@ namespace GardenPlannerApp.Controllers
     [ApiController]
     public class TileTypesController : GardenPlannerAppControllerBase
     {
-        public TileTypesController(GardenPlannerAppDbContext context, IMapper mapper)
-            : base(context, mapper) { }
+        public TileTypesController(GardenPlannerAppDbContext context, IMapper mapper, ILogger<TileTypesController> logger)
+            : base(context, mapper, logger) { }
 
         // GET: api/TileTypes
         [HttpGet]

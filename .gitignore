@@ -338,3 +338,7 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/GardenPlannerApp/log-gardenapp*.txt
+/GardenPlannerApp/log-gardenapp202006162227.txt
+/GardenPlannerApp/log-gardenapp.txt
+/GardenPlannerApp/log-202006162226.txt

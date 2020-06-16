@@ -10,6 +10,7 @@ using GardenPlannerApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using GardenPlannerApp.DTOs;
+using Microsoft.Extensions.Logging;
 
 namespace GardenPlannerApp.Controllers
 {
@@ -19,8 +20,8 @@ namespace GardenPlannerApp.Controllers
     public class GardenTilesController : GardenPlannerAppControllerBase
     {
 
-        public GardenTilesController(GardenPlannerAppDbContext context, IMapper mapper)
-            : base(context, mapper) { }
+        public GardenTilesController(GardenPlannerAppDbContext context, IMapper mapper, ILogger<GardenTilesController> logger)
+            : base(context, mapper, logger) { }
         // GET: api/GardenTiles
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GardenTileDTO>>> GetGardenTiles()

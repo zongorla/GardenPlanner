@@ -15,6 +15,7 @@ using GardenPlannerApp.DTOs;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Logging;
 
 namespace GardenPlannerApp.Controllers
 {
@@ -25,8 +26,8 @@ namespace GardenPlannerApp.Controllers
     public class GardensController : GardenPlannerAppControllerBase
     {
 
-        public GardensController(GardenPlannerAppDbContext context, IMapper mapper)
-            : base(context, mapper) { }
+        public GardensController(GardenPlannerAppDbContext context, IMapper mapper, ILogger<GardensController> logger)
+            : base(context, mapper, logger) { }
 
         // GET: api/Gardens
         [HttpGet]
@@ -48,6 +49,7 @@ namespace GardenPlannerApp.Controllers
                 return NotFound();
             }
             var gardenDto = _mapper.Map<GardenDTO>(garden);
+
             return SetReadonly(gardenDto);
         }
 

@@ -3,6 +3,7 @@ using GardenPlannerApp.Data;
 using GardenPlannerApp.DTOs;
 using GardenPlannerApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +17,13 @@ namespace GardenPlannerApp.Controllers
 
         protected readonly GardenPlannerAppDbContext _context;
         protected readonly IMapper _mapper;
+        protected readonly ILogger<GardenPlannerAppControllerBase> _logger;
 
-        public GardenPlannerAppControllerBase(GardenPlannerAppDbContext context, IMapper mapper)
+        public GardenPlannerAppControllerBase(GardenPlannerAppDbContext context, IMapper mapper, ILogger<GardenPlannerAppControllerBase> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
         private string userId = null;
@@ -31,6 +34,7 @@ namespace GardenPlannerApp.Controllers
                 {
                     userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 }
+                _logger.LogInformation("Read userid {@userId}", new Dictionary<string, string> { { "userId" ,userId }, {"alma" , "alma" } });
                 return userId;
             }
         }
@@ -48,6 +52,7 @@ namespace GardenPlannerApp.Controllers
         protected T SetReadonly<T>(T dto) where T: BaseDTO
         {
             dto.ReadOnly = dto.Owner.Id != UserId;
+            _logger.LogInformation("Object accessed {@object}", dto);
             return dto;
         }
 

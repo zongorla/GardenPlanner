@@ -12,6 +12,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Serilog;
+
 
 namespace GardenPlannerApp
 {
@@ -56,6 +60,19 @@ namespace GardenPlannerApp
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+
+            services.AddApiVersioning(config =>
+            {
+                // Specify the default API Version as 1.0
+                config.DefaultApiVersion = new ApiVersion(1, 0);
+                // If the client hasn't specified the API version in the request, use the default API version number 
+                config.AssumeDefaultVersionWhenUnspecified = true;
+
+                config.ReportApiVersions = true;
+
+                config.ApiVersionReader = new MediaTypeApiVersionReader("v");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,7 +95,7 @@ namespace GardenPlannerApp
             app.UseSpaStaticFiles();
 
             app.UseRouting();
-
+            //app.UseSerilogRequestLogging();
             app.UseAuthentication();
             app.UseIdentityServer();
             app.UseAuthorization();

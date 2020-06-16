@@ -1,6 +1,11 @@
 ﻿
 # DONE
 
+* Automapper: 5 pont
+* ASP.NET Core Identity middleware-rel, süti alapú: 7 pont
+* szűrés dinamikusan, paraméterből érkező property neve alapján (pl.  o => o.Prop == x ) 5 pont
+* verziokezelt API HTTP header: 10 pont
+* diagnosztika beépített vagy külső komponens segítségével 9 pont
 
 
 # TODO
@@ -16,7 +21,7 @@
 
 * Szerver oldali autentikáció [7-18]
   * ASP.NET Core Identity middleware-rel, süti alapú - csak webes kliens esetén! 7
-
+Publikálás docker konténerbe és futtatás konténerből [7]
 
 ## Kommunikáció, hálózatkezelés
 
@@ -24,18 +29,18 @@
 
 * birtokolt típus (owned type) használata [3]
 * DbContext health check a Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore NuGet csomag használatával 
-
-
+* újrapróbálkozás beállítása tranziens adatbázishibák (pl. connection timeout) ellen [2]
+* birtokolt típus (owned type) használata [3]
+* adatbetöltés (seeding) migráció segítségével (HasData) [3]
+* DbContext health check végpont publikálása a Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore NuGet csomag használatával [3]
+* 
 ## .NET Core részfunkciók alkalmazása
 
-* kifejezésfa (ExpressionTree) értelmezése és manipulálása **\[5-20\]**
-    * pl. szűrés dinamikusan, paraméterből érkező property neve alapján (pl. `o => o.Prop == x`) **5**
-    * pl. keresés kapcsolódó kollekcióban dinamikusan (pl. `o => o.Coll.Any(e => e.Prop == x)`) **10**
-    * saját LINQ provider **20**
-    * 
-* unit tesztek készítése [5-12]
-  * minimum 10 függvényhez 5
-  * a unit tesztekben a mock objektumok injektálása +3
-  * EF Core memória-adatbázis használata teszteléshez +4
-  * 
-* Object mapper (pl. [AutoMapper](http://automapper.org/), [QueryMutator](https://github.com/yugabe/QueryMutator)) használata DTO-k létrehozására **\[5\]**
+* unit tesztek készítése [7-14]
+    * minimum 10 függvényhez 7
+    * a unit tesztekben a mock objektumok injektálása +3
+    * EF Core memória-adatbázis vagy sqlite (vagy in-memory sqlite) használata teszteléshez +4
+ 
+
+* platformfüggetlen kódbázisú szerveralkalmazás készítése és bemutatása legalább 2 operációs rendszeren az alábbiak közül: Windows, Linux, Mac, ARM alapú OS (Raspberry Pi). [7]
+
